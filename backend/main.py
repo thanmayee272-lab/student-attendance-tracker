@@ -5,6 +5,17 @@ from pydantic import BaseModel, Field
 import function
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 STATUS = ["present", "absent"]
 
@@ -30,21 +41,13 @@ class AttendanceCreate(BaseModel):
     status: str
 
 
-app.add_middleware(
-     CORSMiddleware,
-     allow_origins=["http://localhost:5173"],
-     allow_methods=["*"],
-     allow_headers=["*"]
-)
-
-
 # E1
 @app.post("/register")
 def register_user(user: UserIn):
     if "@" not in user.email or "." not in user.email.split("@")[-1]:
         raise HTTPException(status_code=422, detail="Invalid email format")
     if function.register_user(username=user.username, email=user.email, password=user.password):
-        return {"message": "Teacher registered successfully"}
+        return {"message": "Registration successfully"}
     raise HTTPException(status_code=409, detail="Email already registered")
 
 
