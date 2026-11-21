@@ -1,41 +1,84 @@
 from fastapi import FastAPI, HTTPException, Header, Body
 from fastapi.middleware.cors import CORSMiddleware
-import functions
-from pydantic import BaseModel
 from datetime import date
+from pydantic import BaseModel, Field
+import function
 
 app = FastAPI()
 
+STATUS = ["present", "absent"]
+
+def check_token(token):
+    if token is None:
+        raise HTTPException(status_code=401, detail="Access token is missing")
+    user_id = function.verify_token(token=token, token_type="access")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid or expired access token")
+    return user_id
+
+
+class UserIn(BaseModel):
+    username: str = Field(min_length=1)
+    email: str = Field(min_length=1)
+    password: str = Field(min_length=1)
+
+
+class AttendanceCreate(BaseModel):
+    student_name: str = Field(min_length=1)
+    roll_no: str = Field(min_length=1)
+    attendance_date: date
+    status: str
+
+
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173","http://127.0.0.1:5173"],
-    allow_methods=["*"],
-    allow_headers=["*"])
+     CORSMiddleware,
+     allow_origins=["http://localhost:5173"],
+     allow_methods=["*"],
+     allow_headers=["*"]
+)
 
 
-@app.get("/")
-def hello():
-    return {"message": "Welcome to Class_rep Movie"}
-
+# E1
 @app.post("/register")
-def register(user: User):
-    if functions.register_user(user_name=user.username, password=user.password, user_type=user.user_type):
-        return {"message": "User registered successfully"}
-    raise HTTPException(status_code=400, detail="User already exists")        
+def register_user(user: UserIn):
+    if "@" not in user.email or "." not in user.email.split("@")[-1]:
+        raise HTTPException(status_code=422, detail="Invalid email format")
+    if function.register_user(username=user.username, email=user.email, password=user.password):
+        return {"message": "Teacher registered successfully"}
+    raise HTTPException(status_code=409, detail="Email already registered")
 
 
+# E2
 @app.post("/login")
-def login(username: str = Body(), password: str = Body()):
-    token = functions.verify_login(username=username, password=password)
+def login(email=Body(), password=Body()):
+    token = function.verify_login(email=email, password=password)
     if not token:
-        raise HTTPException(status_code=401, detail="Invalid")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     return token
 
 
+# E3
 @app.post("/refresh")
-def refresh(refresh_token = Header(None)):
-    payload = functions.verify_token(token=refresh_token, token_type = "refresh")
-    if not payload:
-        raise HTTPException(status_code = 401, detail = "Invalid or refresh token")
-    access_token = functions.create_token(username=payload["username"], user_type=payload["user_type"], token_type = "access")
+def refresh_token(refresh_token = Header(None)):
+    user_id = function.verify_token(token=refresh_token, token_type="refresh")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+    access_token = function.create_token(user_id=user_id, token_type="access")
     return {"access_token": access_token}
+
+
+# E4
+@app.get("/attendance")
+def get_attendance(token = Header(None)):
+    user_id = check_token(token)
+    return function.get_attendance(user_id)
+
+
+# E5
+@app.post("/attendance")
+def add_attendance(attendance: AttendanceCreate, token = Header(None)):
+    user_id = check_token(token)
+    if attendance.status not in STATUS:
+        raise HTTPException(status_code=422, detail="Status must be either present or absent")
+    return function.add_attendance(user_id, attendance.student_name, attendance.roll_no, attendance.attendance_date, attendance.status)
+
