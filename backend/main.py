@@ -41,17 +41,17 @@ class AttendanceCreate(BaseModel):
     status: str
 
 
-# E1
+# A1
 @app.post("/register")
 def register_user(user: UserIn):
     if "@" not in user.email or "." not in user.email.split("@")[-1]:
         raise HTTPException(status_code=422, detail="Invalid email format")
-    if function.register_user(username=user.username, email=user.email, password=user.password):
+    if function.register_user(user: UserIn):
         return {"message": "Registration successfully"}
     raise HTTPException(status_code=409, detail="Email already registered")
 
 
-# E2
+# A2
 @app.post("/login")
 def login(email=Body(), password=Body()):
     token = function.verify_login(email=email, password=password)
@@ -60,7 +60,7 @@ def login(email=Body(), password=Body()):
     return token
 
 
-# E3
+# A3
 @app.post("/refresh")
 def refresh_token(refresh_token = Header(None)):
     user_id = function.verify_token(token=refresh_token, token_type="refresh")
@@ -70,18 +70,18 @@ def refresh_token(refresh_token = Header(None)):
     return {"access_token": access_token}
 
 
-# E4
+# E1
 @app.get("/attendance")
 def get_attendance(token = Header(None)):
     user_id = check_token(token)
     return function.get_attendance(user_id)
 
 
-# E5
+# E2
 @app.post("/attendance")
 def add_attendance(attendance: AttendanceCreate, token = Header(None)):
     user_id = check_token(token)
     if attendance.status not in STATUS:
         raise HTTPException(status_code=422, detail="Status must be either present or absent")
-    return function.add_attendance(user_id, attendance.student_name, attendance.roll_no, attendance.attendance_date, attendance.status)
+    return function.add_attendance(attendance: AttendanceCreate, user_id=user_id)
 
