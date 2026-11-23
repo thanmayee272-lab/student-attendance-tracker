@@ -65,7 +65,7 @@ def register_user(username, email, password):
         hashed_password=ph.hash(password),
         created_at=datetime.now()
     )
-    session.add(new_user)
+    session.add(user)
     session.commit()
     session.close()
     return True
