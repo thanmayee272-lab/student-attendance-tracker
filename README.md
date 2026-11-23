@@ -11,7 +11,7 @@ A full-stack attendance application built with React and FastAPI. It supports ac
 
 ## 2. Live App
 
-- **EC2 public link:** `----------------------------------`
+- **EC2 public link:** `13.127.116.187:8001/docs`
 
 ## 3. How to Run It
 
@@ -114,37 +114,32 @@ SQLite database file: `backend/attendance.db`
 
 ## 6. Screenshots
 
-Replace each placeholder below with the final screenshot.
-
-![Registration screen](screenshots/registration.png)
-
 Registration screen
-
-![Login screen](screenshots/login.png)
+<img width="1472" height="731" alt="WhatsApp Image 2026-11-23 at 2 02 02 PM" src="https://github.com/user-attachments/assets/cf3f7754-ac4c-4dd3-bce4-b63b6510c0d6" />
 
 Login screen
+<img width="1600" height="678" alt="WhatsApp Image 2026-11-23 at 2 03 17 PM" src="https://github.com/user-attachments/assets/ca8f7882-4d0f-444f-bfb1-f7f787c98895" />
 
-![Dashboard](screenshots/dashboard.png)
 
 Dashboard
+<img width="1600" height="584" alt="WhatsApp Image 2026-11-23 at 2 00 03 PM" src="https://github.com/user-attachments/assets/43fb308a-1442-4386-aa4d-f1d70f8952c5" />
 
-![Error message](screenshots/error-message.png)
 
 Error message shown on screen
-
-![Swagger docs endpoint](screenshots/docs-endpoint.png)
+<img width="1600" height="784" alt="WhatsApp Image 2026-11-23 at 2 02 24 PM" src="https://github.com/user-attachments/assets/0b07f7df-79ff-4089-be58-5743c2b57552" />
 
 Endpoint working in `/docs`
+<img width="1600" height="776" alt="WhatsApp Image 2026-11-23 at 4 07 51 PM" src="https://github.com/user-attachments/assets/f96d926b-82f5-4dd1-9ec9-782e12ca07c1" />
 
-![Green GitHub Actions run](screenshots/github-actions.png)
 
 Green GitHub Actions run
+<img width="1600" height="480" alt="WhatsApp Image 2026-11-23 at 4 07 56 PM" src="https://github.com/user-attachments/assets/134cc6df-ba43-4ec5-88e1-0b010db7c76f" />
+
 
 ## 7. Known Issues
 
-- The deployed EC2 public link is not yet documented as a working link.
-- The frontend API URL is hard-coded to `http://127.0.0.1:8001`, so it needs configuration to call the deployed backend.
-- CORS is configured only for local Vite origins (`localhost:5173` and `127.0.0.1:5173`), not the EC2 frontend origin.
+- The backend is runt in 8000 port but we used 8001 in the code.
+- The docker workflow deploy file is added within the backend where it results by showing not connected and not showing any actions in the git later it was moved to main branch which made it work.
 - Automatic refresh-token handling is not implemented in the frontend.
 - The dashboard does not provide a frontend form for creating attendance records; E2 is currently available through the API/Swagger docs.
 - The Docker workflow deployment image name and project container name are based on the workflow template and may need project-specific secrets and naming.
