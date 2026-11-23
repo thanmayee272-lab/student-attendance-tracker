@@ -71,7 +71,7 @@ def refresh_token(refresh_token = Header(None)):
 
 
 # E1
-@app.get("/attendance")
+@app.get("/attendance-tracker")
 def get_attendance(token = Header(None)):
     user_id = check_token(token)
     return function.get_attendance(user_id)
