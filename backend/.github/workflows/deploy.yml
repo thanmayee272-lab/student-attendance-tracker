@@ -3,6 +3,8 @@ name: CI/CD
 on:
   push:
     branches: [main]
+    paths:
+    - backend/**
   workflow_dispatch:
 
 jobs:
@@ -11,7 +13,7 @@ jobs:
     env:
       # Docker Hub image name in the form <dockerhub-username>/<repo-name>, e.g. malnadhudga/warehouse.
       # The username comes from the DOCKERHUB_USERNAME secret; change "warehouse" to your own repo name.
-      IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/warehouse
+      IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/minipro
       VERSION: v${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
@@ -25,8 +27,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: dockerfile
+          context: backend
+          file: backend/dockerfile
           push: true
           tags: |
             ${{ env.IMAGE }}:latest
@@ -43,7 +45,7 @@ jobs:
             sudo systemctl enable --now docker
             sudo usermod -aG docker $USER
             sudo docker pull ${{ env.IMAGE }}:${{ env.VERSION }}
-            sudo docker rm -f warehouse || true
-            sudo docker run -d --name warehouse --restart unless-stopped -p 8001:8001 ${{ env.IMAGE }}:${{ env.VERSION }}
+            sudo docker rm -f minipro || true
+            sudo docker run -d --name minipro --restart unless-stopped -p 8001:8001 ${{ env.IMAGE }}:${{ env.VERSION }}
             sudo docker image prune -af
-            sudo docker ps --filter name=warehouse
+            sudo docker ps --filter name=minipro
