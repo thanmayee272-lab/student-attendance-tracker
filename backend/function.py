@@ -65,7 +65,7 @@ def register_user(username, email, password):
         hashed_password=ph.hash(password),
         created_at=datetime.now()
     )
-    session.add(user)
+    session.add(new_user)
     session.commit()
     session.close()
     return True
@@ -86,7 +86,7 @@ def verify_login(email, password):
     user_id = user.id
     session.close()
     access_token = create_token(user_id=user_id, token_type="access")
-    refresh_token = create_token(user_id=user_id, token_type="refresh")
+    refresh_token = create_token(user_id, token_type="refresh")
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
