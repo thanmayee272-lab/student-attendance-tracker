@@ -52,7 +52,7 @@ def attendance_details(record):
     }
 
 
-# E1
+# A1
 def register_user(username, email, password):
     session = Session(engine)
     user_exists = session.query(User).filter_by(email=email).first()
@@ -71,7 +71,7 @@ def register_user(username, email, password):
     return True
 
 
-# E2
+# A2
 def verify_login(email, password):
     session = Session(engine)
     user = session.query(User).filter_by(email=email).first()
@@ -90,7 +90,7 @@ def verify_login(email, password):
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
-# E3
+# A3
 def create_token(user_id, token_type):
     time = ACCESS_TOKEN_EXPIRY
     if token_type == "refresh":
@@ -114,7 +114,7 @@ def verify_token(token, token_type):
     return False
 
 
-# E4
+# E1
 def get_attendance(user_id):
     session = Session(engine)
     records = session.query(Attendance).filter_by(user_id=user_id).all()
@@ -123,7 +123,7 @@ def get_attendance(user_id):
     return response
 
 
-# E5
+# E2
 def add_attendance(user_id, student_name, roll_no, attendance_date, status):
     session = Session(engine)
     record = Attendance(
